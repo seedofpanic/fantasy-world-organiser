@@ -1,15 +1,22 @@
-const setupEvents = require('./installer');
+const setupEvents = require("./installer");
 const debug = process.env.IS_DEBUG;
 
 if (setupEvents.handleSquirrelEvent()) {
   return;
 }
 
-const {app, BrowserWindow, ipcMain, Menu, MenuItem, dialog} = require('electron');
-const path = require('path');
-const fs = require('fs');
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  MenuItem,
+  dialog,
+} = require("electron");
+const path = require("path");
+const fs = require("fs");
 
-const configPath = 'app.config';
+const configPath = "app.config";
 let config;
 
 function updateConfig(key, value) {
@@ -19,13 +26,13 @@ function updateConfig(key, value) {
 
 function loadConfig() {
   if (fs.existsSync(configPath)) {
-    const configData = fs.readFileSync(configPath, {encoding: 'utf8'});
+    const configData = fs.readFileSync(configPath, { encoding: "utf8" });
 
     try {
       config = JSON.parse(configData);
     } catch (e) {
       config = {};
-      throw 'config file content is damaged';
+      throw "config file content is damaged";
     }
   } else {
     config = {};
@@ -42,79 +49,99 @@ loadConfig();
 
 function createWindow() {
   const win = new BrowserWindow({
-    title: 'Fantasy World Organizer',
+    title: "Fantasy World Organizer",
     width: 2000,
     height: 1200,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
+      preload: path.join(__dirname, "preload.js"),
+    },
   });
 
   if (debug) {
-    win.loadURL('http://localhost:3000/');
+    win.loadURL("http://localhost:3000/");
   } else {
-    win.loadFile('build/index.html');
+    win.loadFile("build/index.html");
   }
 
   return win;
 }
 
 const saveEvent = {
-  type: 'keyDown',
-  keyCode: 's',
-  modifiers: ['ctrl']
+  type: "keyDown",
+  keyCode: "s",
+  modifiers: ["ctrl"],
 };
 
 function constructMenus(win) {
   const menu = Menu.getApplicationMenu();
 
-  menu.items[0].submenu.insert(0, new MenuItem({
-    label: 'New', click: () => {
-      requestSaveAs(win, true);
-    }
-  }));
-  menu.items[0].submenu.insert(1, new MenuItem({
-    label: 'Open', click: () => {
-      const path = dialog.showOpenDialogSync({
-        filters: [{
-          name: 'fws',
-          extensions: ['fws']
-        }],
-        defaultPath: __dirname
-      });
+  menu.items[0].submenu.insert(
+    0,
+    new MenuItem({
+      label: "New",
+      click: () => {
+        requestSaveAs(win, true);
+      },
+    })
+  );
+  menu.items[0].submenu.insert(
+    1,
+    new MenuItem({
+      label: "Open",
+      click: () => {
+        const path = dialog.showOpenDialogSync({
+          filters: [
+            {
+              name: "fws",
+              extensions: ["fws"],
+            },
+          ],
+          defaultPath: __dirname,
+        });
 
-      if (path && path[0]) {
-        updateConfig('savingPath', path[0]);
-        load(win);
-      }
-    }
-  }));
-  menu.items[0].submenu.insert(2, new MenuItem({
-    label: 'Save', click: () => {
-      win.webContents.sendInputEvent(saveEvent);
-    }
-  }));
-  menu.items[0].submenu.insert(3, new MenuItem({
-    label: 'Save As', click: () => {
-      requestSaveAs(win, false);
-    }
-  }));
+        if (path && path[0]) {
+          updateConfig("savingPath", path[0]);
+          load(win);
+        }
+      },
+    })
+  );
+  menu.items[0].submenu.insert(
+    2,
+    new MenuItem({
+      label: "Save",
+      click: () => {
+        win.webContents.sendInputEvent(saveEvent);
+      },
+    })
+  );
+  menu.items[0].submenu.insert(
+    3,
+    new MenuItem({
+      label: "Save As",
+      click: () => {
+        requestSaveAs(win, false);
+      },
+    })
+  );
 }
 
 function requestSaveAs(win, clear) {
   const path = dialog.showSaveDialogSync({
-    filters: [{
-      name: 'fws',
-      extensions: ['fws']
-    }],
-    defaultPath: __dirname
+    filters: [
+      {
+        name: "fws",
+        extensions: ["fws"],
+      },
+    ],
+    defaultPath: __dirname,
   });
 
   if (path) {
-    updateConfig('savingPath', path);
+    updateConfig("savingPath", path);
 
     if (clear) {
-      win.webContents.send('loaded', {fileName: path});
+      win.webContents.send("loaded", { fileName: path });
     }
 
     win.webContents.sendInputEvent(saveEvent);
@@ -124,7 +151,7 @@ function requestSaveAs(win, clear) {
 app.whenReady().then(() => {
   let win = createWindow();
 
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       win = createWindow();
     }
@@ -141,15 +168,15 @@ app.whenReady().then(() => {
   }
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
   }
 });
 
-ipcMain.on('save', (e, data) => {
-  fs.writeFile(config.savingPath, data, {encoding: 'utf8'}, () => {
-    e.reply('saved');
+ipcMain.on("save", (e, data) => {
+  fs.writeFile(config.savingPath, data, { encoding: "utf8" }, () => {
+    e.reply("saved");
   });
 });
 
@@ -160,7 +187,7 @@ function load(win) {
     return;
   }
 
-  const data = fs.readFileSync(fileName, {encoding: 'utf8'});
+  const data = fs.readFileSync(fileName, { encoding: "utf8" });
 
-  win.webContents.send('loaded', {data, fileName});
+  win.webContents.send("loaded", { data, fileName });
 }

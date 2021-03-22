@@ -1,4 +1,1 @@
-export const races = [
-    'Human',
-    'Elf'
-];
+export const races = ["Human", "Elf"];

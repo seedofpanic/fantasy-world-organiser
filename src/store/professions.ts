@@ -1,4 +1,1 @@
-export const professions = [
-    'Warrior',
-    'Cleric',
-];
+export const professions = ["Warrior", "Cleric"];

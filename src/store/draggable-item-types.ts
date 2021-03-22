@@ -1,3 +1,3 @@
 export const DraggableItemTypes = {
-    Character: 'Character'
+  Character: "Character",
 };

@@ -1,41 +1,41 @@
-import {makeAutoObservable} from "mobx";
-import {Character} from "./character";
+import { makeAutoObservable } from "mobx";
+import { Character } from "./character";
 
 let newId = 1;
 
 export class Place {
-    static isSerializable = true;
-    static type = 'Place';
+  static isSerializable = true;
+  static type = "Place";
 
-    id = newId++;
-    name = `Place ${this.id}`;
-    characters: Set<Character> = new Set<Character>();
+  id = newId++;
+  name = `Place ${this.id}`;
+  characters: Set<Character> = new Set<Character>();
 
-    constructor() {
-        makeAutoObservable(this);
-    }
+  constructor() {
+    makeAutoObservable(this);
+  }
 
-    addCharacter(character: Character) {
-        this.characters.add(character);
-    }
+  addCharacter(character: Character) {
+    this.characters.add(character);
+  }
 
-    setId(id: number) {
-        this.id = id;
-    }
+  setId(id: number) {
+    this.id = id;
+  }
 
-    setName(name: string) {
-        this.name = name;
-    }
+  setName(name: string) {
+    this.name = name;
+  }
 
-    setCharacters(characters: Set<Character>) {
-        this.characters = new Set(characters);
-    }
+  setCharacters(characters: Set<Character>) {
+    this.characters = new Set(characters);
+  }
 
-    createNewCharacter() {
-        this.addCharacter(new Character());
-    }
+  createNewCharacter() {
+    this.addCharacter(new Character());
+  }
 
-    removeCharacter(character: Character) {
-        this.characters.delete(character);
-    }
+  removeCharacter(character: Character) {
+    this.characters.delete(character);
+  }
 }
