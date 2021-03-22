@@ -2,6 +2,7 @@ import {makeAutoObservable, reaction} from "mobx";
 import {Region} from "./region";
 import {Place} from "./place";
 import {Character} from "./character";
+import {CharacterMovement} from "./characterMovement";
 
 const serializers = {
     [Region.type]: Region,
@@ -10,7 +11,7 @@ const serializers = {
 };
 
 declare var window: Window & typeof globalThis & {
-    saveData: (data: string) => void;
+    saveData: (data: string, cb?: () => void) => void;
     loadData: (cb: (data: {data: string, fileName: string}) => void) => void;
     initSavingProcess: () => void;
 };
@@ -41,9 +42,23 @@ class Store {
     } = {
         isOpen: false
     };
+    appQuite: {
+        canQuite: boolean;
+        isOpen: boolean
+    } = {
+        canQuite: false,
+        isOpen: false
+    };
+    characterMovement = new CharacterMovement();
 
     constructor() {
         makeAutoObservable(this);
+    }
+
+    setAppQuite(isOpen: boolean, canQuite = false) {
+        this.appQuite.isOpen = isOpen;
+        this.appQuite.canQuite = canQuite;
+        window.close();
     }
 
     setRegionDeletion(isOpen: boolean, regionFrom?: Region, region?: Region | Place) {
@@ -127,26 +142,34 @@ window.loadData((data) => {
     }
 });
 
+let savingTimer: any;
+
 function startSaving() {
-    setTimeout(() => {
-        save();
+    if (savingTimer) {
+        clearTimeout(savingTimer);
+    }
+
+    savingTimer = setTimeout(() => {
+        saveCurrentProject();
     }, 10000);
 }
 
 document.addEventListener('keydown', (event) => {
    if (event.code === 'KeyS' && event.ctrlKey && !event.altKey && !event.shiftKey) {
-       save();
+       saveCurrentProject();
    }
 });
 
-const save = () => {
-    window.saveData(JSON.stringify(store, (key, value) => {
+export const saveCurrentProject = (cb?: () => void) => {
+    const data = JSON.stringify(store, (key, value) => {
         if (value && typeof value === "object" && value.constructor.isSerializable) {
             return {...value, type: value.constructor.type};
         }
 
         return value;
-    }));
+    });
+
+    window.saveData(data, cb);
 };
 
 function loadData({data, fileName}: {data: string, fileName: string}) {
@@ -183,3 +206,15 @@ function restore<T>(obj: T, data: Partial<T>) {
 
     return obj;
 }
+
+window.onbeforeunload = (e: BeforeUnloadEvent) => {
+    if (!store.appQuite.canQuite) {
+        store.setAppQuite(true);
+    }
+
+    if (store.appQuite.canQuite) {
+        return;
+    } else {
+        return store.appQuite.canQuite;
+    }
+};

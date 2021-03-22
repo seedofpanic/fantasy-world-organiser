@@ -10,6 +10,9 @@ import {createStyles, Theme} from "@material-ui/core";
 import {store} from "../store/store";
 import CardContent from "@material-ui/core/CardContent";
 import Close from '@material-ui/icons/Close';
+import {useDrag} from "react-dnd";
+import {DraggableItemTypes} from "../store/draggable-item-types";
+import {Place} from "../store/place";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -64,15 +67,27 @@ const ClassRaceLabel = observer(({character}: {character: Character}) => {
         </>
 });
 
-const CharacterCard = observer(({character, remove}: {character: Character, remove: () => void}) => {
+const CharacterCard = observer(({place, character, remove}: {place: Place, character: Character, remove: () => void}) => {
     const classes = useStyles();
+    const [{isDragging}, drag] = useDrag(() => ({
+        type: DraggableItemTypes.Character,
+        collect: monitor => ({
+            isDragging: monitor.isDragging(),
+            item: {
+                character,
+                place
+            }
+        }),
+    }));
+
+
 
     function onRemoveClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.stopPropagation();
         remove();
     }
 
-    return <Card className={classes.character} variant="outlined" onClick={(e) => handleClickOpen(e, character)}>
+    return <Card ref={drag} className={classes.character} variant="outlined" onClick={(e) => handleClickOpen(e, character)}>
         <CardHeader className={classes.title}
             avatar={
                 <Avatar aria-label="recipe">

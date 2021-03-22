@@ -13,6 +13,7 @@ export interface ConfirmationDialogRawProps {
     open: boolean;
     onClose: (result: boolean) => void;
     toDeleteName?: string;
+    title?: string;
 }
 
 const useLabelStyles = makeStyles((theme: Theme) =>
@@ -24,7 +25,7 @@ const useLabelStyles = makeStyles((theme: Theme) =>
 );
 
 function DeleteConfirmationDialog(props: ConfirmationDialogRawProps) {
-    const { onClose, open, toDeleteName, ...other } = props;
+    const { onClose, open, toDeleteName, title, ...other } = props;
     const radioGroupRef = React.useRef<HTMLElement>(null);
     const classes = useLabelStyles();
 
@@ -52,7 +53,12 @@ function DeleteConfirmationDialog(props: ConfirmationDialogRawProps) {
             open={open}
             {...other}
         >
-            <DialogTitle id="confirmation-dialog-title" className={classes.title}>Are you sure you want to delete {toDeleteName ? `"${toDeleteName}"` : 'this item'}?</DialogTitle>
+            <DialogTitle id="confirmation-dialog-title" className={classes.title}>
+                {title
+                    ? <span>{title}</span>
+                    : <span>Are you sure you want to delete {toDeleteName ? `"${toDeleteName}"` : 'this item'}?</span>
+                }
+            </DialogTitle>
             <DialogActions>
                 <Button autoFocus onClick={handleCancel} color="primary">
                     Cancel

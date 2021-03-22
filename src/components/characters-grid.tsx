@@ -6,6 +6,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import {Character} from "../store/character";
 import CharacterEditDialog from "./character-edit-dialog";
 import CharacterCard from "./character-card";
+import {Place} from "../store/place";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -22,14 +23,15 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-function CharactersGrid({characters, removeCharacter}: { characters: Set<Character>, removeCharacter: (character: Character) => void }) {
+function CharactersGrid({characters, removeCharacter, place}: { characters: Set<Character>, removeCharacter: (character: Character) => void, place: Place }) {
     const classes = useStyles();
 
     return <>
         <GridList cellHeight={160} className={classes.gridList} cols={3}>
             {Array.from(characters).map((character, index) => (
                 <GridListTile key={index} cols={1}>
-                    <CharacterCard character={character} remove={() => removeCharacter(character)}/>
+                    <CharacterCard place={place} character={character}
+                                   remove={() => removeCharacter(character)}/>
                 </GridListTile>
             ))}
         </GridList>

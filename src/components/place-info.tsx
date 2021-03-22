@@ -62,7 +62,7 @@ function PlaceInfo({place}: { place: Place }) {
         <Card className={classes.name}>
             <NameEdit name={place.name} onChange={(name: string) => place.setName(name)}/>
         </Card>
-        <div className={classes.characters}><CharactersGrid characters={place.characters} removeCharacter={(character) => removeCharacter(place, character)}/></div>
+        <div className={classes.characters}><CharactersGrid place={place} characters={place.characters} removeCharacter={(character) => removeCharacter(place, character)}/></div>
         <Card className={classes.actions}>
             <Button className={classes.actionMargin} variant="contained" color="primary" onClick={() => place.createNewCharacter()}>Add</Button>
             {/*<Button variant="contained" color="secondary" onClick={() => place.createNewCharacter()}>Generate</Button>*/}

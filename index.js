@@ -1,3 +1,9 @@
+const setupEvents = require('./installer');
+
+if (setupEvents.handleSquirrelEvent()) {
+  return;
+}
+
 const {app, BrowserWindow, ipcMain, Menu, MenuItem, dialog} = require('electron');
 const path = require('path');
 const fs = require('fs');
@@ -43,8 +49,8 @@ function createWindow() {
     }
   });
 
-  // win.loadURL('http://localhost:3000/');
-  win.loadFile('build/index.html');
+  win.loadURL('http://localhost:3000/');
+  // win.loadFile('build/index.html');
 
   return win;
 }
@@ -120,7 +126,7 @@ app.whenReady().then(() => {
     }
   });
 
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
   constructMenus(win);
 
   if (config.savingPath) {

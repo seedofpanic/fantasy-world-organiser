@@ -14,6 +14,9 @@ import {Add, Close} from "@material-ui/icons";
 import {Place} from "../store/place";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
+import {useDrop} from "react-dnd";
+import {DraggableItemTypes} from "../store/draggable-item-types";
+import {Character} from "../store/character";
 
 function TransitionComponent(props: TransitionProps) {
     const style = useSpring({
@@ -76,6 +79,17 @@ function LabelComponent({region, label, remove}: { region: Region | Place, label
     const classes = useLabelStyles();
     const speedDialClasses = speedDialStyles();
     const [open, setOpen] = React.useState(false);
+    let [, drop] = useDrop<Character, void, void>(
+        () => ({
+            accept: DraggableItemTypes.Character,
+            drop: (character: Character) => {
+                console.log(character);
+                if (region instanceof Place) {
+                    region.addCharacter(character);
+                }
+            }
+        })
+    );
 
     const handleClose = () => {
         setOpen(false);
@@ -104,7 +118,7 @@ function LabelComponent({region, label, remove}: { region: Region | Place, label
         },
     ];
 
-    return <div className={classes.box}>
+    return <div className={classes.box} ref={drop}>
         <div className={classes.name}>{label}</div>
         <div className={classes.actions}>
             {region instanceof Region ?
@@ -167,8 +181,8 @@ const RegionListItem = observer(({region, path}: { region: Region, path: string 
         {Array.from(region.children).map((child, index) =>
             <StyledTreeItem key={child.id} nodeId={path + '-' + index}
                             label={<LabelComponent region={child}
-                                remove={() => remove(region, child)}
-                                label={child.name || '<Uncharted territory>'}/>}
+                                                   remove={() => remove(region, child)}
+                                                   label={child.name || '<Uncharted territory>'}/>}
                             onClick={() => store.selectRegion(child)}>
                 {(child instanceof Region) && child.children.size ?
                     <RegionListItem region={child} path={path + '-' + index}/> :
