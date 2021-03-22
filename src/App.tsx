@@ -9,7 +9,6 @@ import {Region} from "./store/region";
 import {Place} from "./store/place";
 import PlaceInfo from "./components/place-info";
 import DeleteConfirmationDialog from "./components/delete-confirmation-dialog";
-import {DragDropContext, DragStart, DropResult, ResponderProvided} from "react-beautiful-dnd";
 
 const useStyles = makeStyles({
     app: {
@@ -17,6 +16,8 @@ const useStyles = makeStyles({
         'flex-direction': 'row'
     },
     regionsList: {
+        display: 'flex',
+        flexDirection: 'column',
         height: '100%',
         flex: '0 1 400px',
         padding: '30px',
@@ -43,20 +44,6 @@ function handleClose(result: boolean) {
     }
 
     store.setAppQuite(false, true);
-}
-
-function onDragEnd(result: DropResult, provided: ResponderProvided) {
-    console.log(result);
-    console.log(store.characterMovement);
-}
-
-function onDragStart(initial: DragStart, provided: ResponderProvided) {
-    if (store.selectedRegion instanceof Place) {
-        store.characterMovement.startDragging(
-            Array.from(store.selectedRegion.characters)[+initial.draggableId],
-            store.selectedRegion
-        )
-    }
 }
 
 function App() {

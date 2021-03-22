@@ -25,6 +25,9 @@ const useStyles = makeStyles({
     addButton: {
         margin: 'auto',
         marginBottom: 20
+    },
+    actions: {
+        flex: '0 0 auto'
     }
 });
 
@@ -36,7 +39,9 @@ function RegionsList() {
     const classes = useStyles();
 
     return <>
-        <Button className={classes.addButton} color="primary" variant="contained" onClick={addRegion}>Add Region</Button>
+        <div className={classes.actions}>
+            <Button className={classes.addButton} color="primary" variant="contained" onClick={addRegion}>Add Region</Button>
+        </div>
         <TreeView
             className={classes.root}
             defaultExpanded={[]}

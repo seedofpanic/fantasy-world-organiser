@@ -1,14 +1,14 @@
-import {TreeItem, TreeItemProps} from "@material-ui/lab";
-import React, {DragEvent, ReactNode} from "react";
-import {Region} from "../store/region";
+import {TreeItem, TreeItemProps} from '@material-ui/lab';
+import React, {DragEvent} from 'react';
+import {Region} from '../store/region';
 import {observer} from "mobx-react-lite";
 import {createStyles, fade, Theme} from "@material-ui/core";
 import {TransitionProps} from "@material-ui/core/transitions";
 import {useSpring, animated} from 'react-spring/web.cjs';
-import Collapse from "@material-ui/core/Collapse";
+import Collapse from '@material-ui/core/Collapse';
 import withStyles from "@material-ui/core/styles/withStyles";
 import {store} from "../store/store";
-import makeStyles from "@material-ui/core/styles/makeStyles"; // web.cjs is required for IE 11 support
+import makeStyles from '@material-ui/core/styles/makeStyles'; // web.cjs is required for IE 11 support
 import IconButton from '@material-ui/core/IconButton';
 import {Add, Close} from "@material-ui/icons";
 import {Place} from "../store/place";
@@ -34,7 +34,8 @@ const useLabelStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            padding: '10px 0'
         },
         name: {
             flex: '1 1 auto',

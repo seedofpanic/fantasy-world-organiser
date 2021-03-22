@@ -6,12 +6,11 @@
   "author": "seedofpanic",
   "description": "World organiser for DMs",
   "dependencies": {
-    "react-scripts": "^4.0.3"
   },
   "scripts": {
     "react": "react-scripts start",
-    "start": "cross-env ID_DEBUG=true electron-forge start",
-    "build": "react-scripts build",
+    "start": "cross-env IS_DEBUG=true electron-forge start",
+    "build": "cross-env \"PUBLIC_URL=.\" react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "package": "electron-forge package",
@@ -36,6 +35,7 @@
     ]
   },
   "devDependencies": {
+    "react-scripts": "^4.0.3",
     "@electron-forge/cli": "^6.0.0-beta.54",
     "@electron-forge/maker-deb": "^6.0.0-beta.54",
     "@electron-forge/maker-rpm": "^6.0.0-beta.54",
@@ -50,7 +50,6 @@
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
-    "@types/react-beautiful-dnd": "^13.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/sortablejs": "^1.10.6",
     "cross-env": "^7.0.3",
@@ -69,9 +68,11 @@
   "config": {
     "forge": {
       "packagerConfig": {
+        "asar": true,
         "ignore": [
           "public",
           "src",
+          "node_modules/react-scripts",
           "fws$"
         ]
       },
