@@ -1,5 +1,5 @@
 import {TreeItem, TreeItemProps} from "@material-ui/lab";
-import React from "react";
+import React, {DragEvent, ReactNode} from "react";
 import {Region} from "../store/region";
 import {observer} from "mobx-react-lite";
 import {createStyles, fade, Theme} from "@material-ui/core";
@@ -14,9 +14,6 @@ import {Add, Close} from "@material-ui/icons";
 import {Place} from "../store/place";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import {useDrop} from "react-dnd";
-import {DraggableItemTypes} from "../store/draggable-item-types";
-import {Character} from "../store/character";
 
 function TransitionComponent(props: TransitionProps) {
     const style = useSpring({
@@ -75,21 +72,10 @@ const speedDialStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-function LabelComponent({region, label, remove}: { region: Region | Place, label: React.ReactNode, remove: () => void }) {
+const LabelComponent = observer(({region, label, remove}: { region: Region | Place, label: string, remove: () => void }) => {
     const classes = useLabelStyles();
     const speedDialClasses = speedDialStyles();
     const [open, setOpen] = React.useState(false);
-    let [, drop] = useDrop<Character, void, void>(
-        () => ({
-            accept: DraggableItemTypes.Character,
-            drop: (character: Character) => {
-                console.log(character);
-                if (region instanceof Place) {
-                    region.addCharacter(character);
-                }
-            }
-        })
-    );
 
     const handleClose = () => {
         setOpen(false);
@@ -118,7 +104,8 @@ function LabelComponent({region, label, remove}: { region: Region | Place, label
         },
     ];
 
-    return <div className={classes.box} ref={drop}>
+    return <div className={classes.box} onDrop={event => onDrop(event, region)} onDragOver={e => allowDrop(e, region)}
+                onDragLeave={onDragLeave}>
         <div className={classes.name}>{label}</div>
         <div className={classes.actions}>
             {region instanceof Region ?
@@ -145,7 +132,7 @@ function LabelComponent({region, label, remove}: { region: Region | Place, label
             <IconButton size="small" onClick={remove}><Close/></IconButton>
         </div>
     </div>;
-}
+});
 
 const StyledTreeItem = withStyles((theme: Theme) =>
     createStyles({
@@ -164,11 +151,34 @@ const StyledTreeItem = withStyles((theme: Theme) =>
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        dragOver: {
+            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%);',
+            color: 'white'
+        },
         actions: {
             textAlign: 'center'
         }
     }),
 );
+
+function allowDrop(ev: DragEvent, region: Region | Place) {
+    if (region instanceof Place) {
+        store.characterMovement.setToPlace(region);
+    }
+    ev.preventDefault();
+}
+
+function onDragLeave() {
+    store.characterMovement.setToPlace(undefined);
+}
+
+function onDrop(ev: DragEvent, region: Region | Place) {
+    if (region instanceof Place && store.characterMovement.draggedCharacter) {
+        store.characterMovement.fromPlace?.removeCharacter(store.characterMovement.draggedCharacter);
+        region.addCharacter(store.characterMovement.draggedCharacter);
+        onDragLeave();
+    }
+}
 
 function remove(regionFrom: Region, region: Region | Place) {
     store.setRegionDeletion(true, regionFrom, region);
@@ -178,17 +188,25 @@ const RegionListItem = observer(({region, path}: { region: Region, path: string 
     const classes = useStyles();
 
     return <>
-        {Array.from(region.children).map((child, index) =>
-            <StyledTreeItem key={child.id} nodeId={path + '-' + index}
-                            label={<LabelComponent region={child}
-                                                   remove={() => remove(region, child)}
-                                                   label={child.name || '<Uncharted territory>'}/>}
-                            onClick={() => store.selectRegion(child)}>
-                {(child instanceof Region) && child.children.size ?
-                    <RegionListItem region={child} path={path + '-' + index}/> :
-                    ''
-                }
-            </StyledTreeItem>
+        {Array.from(region.children).map((child, index) => {
+                const nodeId = path ? path + '-' + index : index.toString();
+
+                return <StyledTreeItem
+                    className={child === store.characterMovement.toPlace ? classes.dragOver : ''}
+                    key={child.id} nodeId={nodeId}
+                    label={
+                        <LabelComponent
+                            region={child}
+                            remove={() => remove(region, child)}
+                            label={child.name || '<Uncharted territory>'}/>
+                    }
+                    onClick={() => store.selectRegion(child)}>
+                    {(child instanceof Region) && child.children.size ?
+                        <RegionListItem region={child} path={path + '-' + index}/> :
+                        ''
+                    }
+                </StyledTreeItem>;
+            }
         )}
     </>
 });

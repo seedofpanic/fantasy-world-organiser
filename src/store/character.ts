@@ -4,6 +4,7 @@ export class Character {
     static isSerializable = true;
     static type = 'Character';
 
+    id: string = '';
     name: string = '';
     description: string = '';
     race: string = '';

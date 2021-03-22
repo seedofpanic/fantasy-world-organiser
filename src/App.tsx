@@ -9,8 +9,7 @@ import {Region} from "./store/region";
 import {Place} from "./store/place";
 import PlaceInfo from "./components/place-info";
 import DeleteConfirmationDialog from "./components/delete-confirmation-dialog";
-import {DndProvider} from "react-dnd";
-import {HTML5Backend} from "react-dnd-html5-backend";
+import {DragDropContext, DragStart, DropResult, ResponderProvided} from "react-beautiful-dnd";
 
 const useStyles = makeStyles({
     app: {
@@ -46,6 +45,20 @@ function handleClose(result: boolean) {
     store.setAppQuite(false, true);
 }
 
+function onDragEnd(result: DropResult, provided: ResponderProvided) {
+    console.log(result);
+    console.log(store.characterMovement);
+}
+
+function onDragStart(initial: DragStart, provided: ResponderProvided) {
+    if (store.selectedRegion instanceof Place) {
+        store.characterMovement.startDragging(
+            Array.from(store.selectedRegion.characters)[+initial.draggableId],
+            store.selectedRegion
+        )
+    }
+}
+
 function App() {
     const classes = useStyles();
 
@@ -60,16 +73,14 @@ function App() {
     return <>
         {store.fileName ?
             <div className={'App ' + classes.app}>
-                <DndProvider backend={HTML5Backend}>
-                    <div className={classes.regionsList}>
-                        <RegionsList/>
-                    </div>
-                    <div className={classes.info}>
-                        {store.selectedRegion
-                            ? getInfoComponent(store.selectedRegion)
-                            : ''}
-                    </div>
-                </DndProvider>
+                <div className={classes.regionsList}>
+                    <RegionsList/>
+                </div>
+                <div className={classes.info}>
+                    {store.selectedRegion
+                        ? getInfoComponent(store.selectedRegion)
+                        : ''}
+                </div>
             </div> : <h1>No project loaded. Please create a new one with File/New</h1>}
         <DeleteConfirmationDialog
             classes={{

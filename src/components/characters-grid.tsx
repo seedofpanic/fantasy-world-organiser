@@ -1,12 +1,12 @@
 import React from "react";
 import {observer} from "mobx-react-lite";
-import {createStyles, GridList, Theme} from "@material-ui/core";
-import GridListTile from "@material-ui/core/GridListTile";
+import {createStyles, Theme} from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {Character} from "../store/character";
 import CharacterEditDialog from "./character-edit-dialog";
 import CharacterCard from "./character-card";
 import {Place} from "../store/place";
+import {store} from "../store/store";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -15,26 +15,33 @@ const useStyles = makeStyles((theme: Theme) =>
             flexWrap: 'wrap',
             justifyContent: 'space-around',
             overflow: 'hidden',
-            backgroundColor: theme.palette.background.paper,
+            backgroundColor: theme.palette.background.paper
         },
         gridList: {
-            width: '100%'
+            width: '100%',
+            display: 'flex',
+            flexWrap: 'wrap'
         }
     }),
 );
+
+function onDragStart(event: React.DragEvent, character: Character, place: Place) {
+    store.characterMovement.startDragging(character, place);
+    // (event.target as HTMLDivElement).style.pointerEvents = 'none';
+}
 
 function CharactersGrid({characters, removeCharacter, place}: { characters: Set<Character>, removeCharacter: (character: Character) => void, place: Place }) {
     const classes = useStyles();
 
     return <>
-        <GridList cellHeight={160} className={classes.gridList} cols={3}>
-            {Array.from(characters).map((character, index) => (
-                <GridListTile key={index} cols={1}>
-                    <CharacterCard place={place} character={character}
-                                   remove={() => removeCharacter(character)}/>
-                </GridListTile>
-            ))}
-        </GridList>
+            <div className={classes.gridList}>
+                {Array.from(characters).map((character, index) => (
+                    <CharacterCard
+                        key={index}
+                        character={character}
+                        remove={() => removeCharacter(character)} onDragStart={(event) => onDragStart(event, character, place)}/>
+                ))}
+            </div>
         <CharacterEditDialog/>
     </>;
 }

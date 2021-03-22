@@ -5,6 +5,7 @@ import {Place} from "./place";
 export class CharacterMovement {
     draggedCharacter?: Character;
     fromPlace?: Place;
+    toPlace?: Place;
 
     constructor() {
         makeAutoObservable(this);
@@ -13,5 +14,9 @@ export class CharacterMovement {
     startDragging(draggedCharacter: Character, fromPlace: Place) {
         this.draggedCharacter = draggedCharacter;
         this.fromPlace = fromPlace;
+    }
+
+    setToPlace(place: Place | undefined) {
+        this.toPlace = place;
     }
 }

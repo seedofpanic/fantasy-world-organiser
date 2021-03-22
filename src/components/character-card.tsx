@@ -10,17 +10,14 @@ import {createStyles, Theme} from "@material-ui/core";
 import {store} from "../store/store";
 import CardContent from "@material-ui/core/CardContent";
 import Close from '@material-ui/icons/Close';
-import {useDrag} from "react-dnd";
-import {DraggableItemTypes} from "../store/draggable-item-types";
-import {Place} from "../store/place";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         character: {
-            height: '100%',
             'box-sizing': 'border-box',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            flex: '0 1 33%',
         },
         title: {
             flex: '0 0 auto'
@@ -43,6 +40,12 @@ const useStyles = makeStyles((theme: Theme) =>
                 height: '1.4em',
                 background: 'linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%)'
             }
+        },
+        still: {
+            height: 177,
+        },
+        isDragging: {
+            height: '72px !important'
         }
     }),
 );
@@ -51,7 +54,7 @@ const handleClickOpen = (event: React.MouseEvent<HTMLDivElement>, character: Cha
     store.setCharacterEditOpen(true, character);
 };
 
-const ClassRaceLabel = observer(({character}: {character: Character}) => {
+const ClassRaceLabel = observer(({character}: { character: Character }) => {
     const texts = [];
 
     if (character.profession) {
@@ -63,44 +66,37 @@ const ClassRaceLabel = observer(({character}: {character: Character}) => {
     }
 
     return <>
-            {texts.join(' - ')}
-        </>
+        {texts.join(' - ')}
+    </>
 });
 
-const CharacterCard = observer(({place, character, remove}: {place: Place, character: Character, remove: () => void}) => {
+const CharacterCard = observer(({onDragStart, character, remove}: {
+    onDragStart: (event: React.DragEvent) => void,
+    character: Character, remove: () => void
+}) => {
     const classes = useStyles();
-    const [{isDragging}, drag] = useDrag(() => ({
-        type: DraggableItemTypes.Character,
-        collect: monitor => ({
-            isDragging: monitor.isDragging(),
-            item: {
-                character,
-                place
-            }
-        }),
-    }));
-
-
 
     function onRemoveClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.stopPropagation();
         remove();
     }
 
-    return <Card ref={drag} className={classes.character} variant="outlined" onClick={(e) => handleClickOpen(e, character)}>
+    return <Card draggable="true" onDragStart={onDragStart} className={
+        `${classes.character}`
+    } variant="outlined" onClick={(e) => handleClickOpen(e, character)}>
         <CardHeader className={classes.title}
-            avatar={
-                <Avatar aria-label="recipe">
-                    {character.name[0] || 'NA'}
-                </Avatar>
-            }
-            action={
-                <IconButton aria-label="close" onClick={onRemoveClick}>
-                    <Close/>
-                </IconButton>
-            }
-            title={character.name || '<Unnamed character>'}
-            subheader={<ClassRaceLabel character={character}/>}
+                    avatar={
+                        <Avatar aria-label="recipe">
+                            {character.name[0] || 'NA'}
+                        </Avatar>
+                    }
+                    action={
+                        <IconButton aria-label="close" onClick={onRemoveClick}>
+                            <Close/>
+                        </IconButton>
+                    }
+                    title={character.name || '<Unnamed character>'}
+                    subheader={<ClassRaceLabel character={character}/>}
         />
         <CardContent className={classes.info}>
             <div className={classes.infoBox}>
