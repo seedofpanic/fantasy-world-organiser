@@ -1,4 +1,5 @@
 const setupEvents = require('./installer');
+const debug = process.env.IS_DEBUG;
 
 if (setupEvents.handleSquirrelEvent()) {
   return;
@@ -49,8 +50,11 @@ function createWindow() {
     }
   });
 
-  win.loadURL('http://localhost:3000/');
-  // win.loadFile('build/index.html');
+  if (debug) {
+    win.loadURL('http://localhost:3000/');
+  } else {
+    win.loadFile('build/index.html');
+  }
 
   return win;
 }
@@ -126,7 +130,10 @@ app.whenReady().then(() => {
     }
   });
 
-  win.webContents.openDevTools();
+  if (debug) {
+    win.webContents.openDevTools();
+  }
+
   constructMenus(win);
 
   if (config.savingPath) {
