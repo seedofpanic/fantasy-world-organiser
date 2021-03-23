@@ -43,14 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function handleClose(result: boolean) {
-  if (result) {
-    store.characterDeletion.commitCharacterDeletion();
-  }
-
-  store.characterDeletion.setCharacterDeletion(false);
-}
-
 function PlaceInfo({ place }: { place: Place }) {
   const classes = useStyles();
 
@@ -76,16 +68,6 @@ function PlaceInfo({ place }: { place: Place }) {
         </Button>
         {/*<Button variant="contained" color="secondary" onClick={() => place.createNewCharacter()}>Generate</Button>*/}
       </Card>
-      <DeleteConfirmationDialog
-        classes={{
-          paper: classes.paper,
-        }}
-        id="ringtone-menu"
-        keepMounted
-        onClose={handleClose}
-        open={store.characterDeletion?.isOpen}
-        toDeleteName={store.characterDeletion?.character?.name}
-      />
     </div>
   );
 }

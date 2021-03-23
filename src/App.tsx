@@ -46,6 +46,12 @@ function handleClose(result: boolean) {
 
   store.appQuite.setAppQuite(false, true);
 }
+function handleCloseCharacterDelete(result: boolean) {
+  if (result) {
+    store.characterDeletion.commitCharacterDeletion();
+  }
+  store.characterDeletion.setCharacterDeletion(false);
+}
 
 function App() {
   const classes = useStyles();
@@ -81,6 +87,16 @@ function App() {
         onClose={handleClose}
         open={store.appQuite.isOpen}
         title="Do you want to save changes before exit?"
+      />
+      <DeleteConfirmationDialog
+        classes={{
+          paper: classes.paper,
+        }}
+        id="ringtone-menu"
+        keepMounted
+        onClose={handleCloseCharacterDelete}
+        open={store.characterDeletion?.isOpen}
+        toDeleteName={store.characterDeletion?.character?.name}
       />
     </>
   );
