@@ -154,6 +154,11 @@ reaction(
 window.loadData((data) => {
   loadData(data);
 
+  if (savingTimer) {
+    clearTimeout(savingTimer);
+    savingTimer = null;
+  }
+
   if (data.fileName) {
     startSaving();
   }
@@ -162,10 +167,6 @@ window.loadData((data) => {
 let savingTimer: any;
 
 function startSaving() {
-  if (savingTimer) {
-    clearTimeout(savingTimer);
-  }
-
   savingTimer = setTimeout(() => {
     saveCurrentProject();
   }, 10000);

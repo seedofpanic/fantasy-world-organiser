@@ -43,10 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function removeCharacter(place: Place, character: Character) {
-  store.setCharacterDeletion(true, place, character);
-}
-
 function handleClose(result: boolean) {
   if (result) {
     store.commitCharacterDeletion();
@@ -67,11 +63,7 @@ function PlaceInfo({ place }: { place: Place }) {
         />
       </Card>
       <div className={classes.characters}>
-        <CharactersGrid
-          place={place}
-          characters={place.characters}
-          removeCharacter={(character) => removeCharacter(place, character)}
-        />
+        <CharactersGrid rootRegion={place} />
       </div>
       <Card className={classes.actions}>
         <Button

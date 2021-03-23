@@ -4,6 +4,7 @@ import NameEdit from "./name-edit";
 import { observer } from "mobx-react-lite";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { createStyles, Theme } from "@material-ui/core";
+import CharactersGrid from "./characters-grid";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,6 +38,9 @@ function RegionInfo({ region }: { region: Region }) {
           name={region.name}
           onChange={(name: string) => region.setName(name)}
         />
+      </div>
+      <div className={classes.characters}>
+        <CharactersGrid rootRegion={region} />
       </div>
     </div>
   );

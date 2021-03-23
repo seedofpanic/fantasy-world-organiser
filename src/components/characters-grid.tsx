@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 import { createStyles, Theme } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -7,6 +7,7 @@ import CharacterEditDialog from "./character-edit-dialog";
 import CharacterCard from "./character-card";
 import { Place } from "../store/place";
 import { store } from "../store/store";
+import { Region } from "../store/region";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,28 +35,36 @@ function onDragStart(
   // (event.target as HTMLDivElement).style.pointerEvents = 'none';
 }
 
-function CharactersGrid({
-  characters,
-  removeCharacter,
-  place,
-}: {
-  characters: Set<Character>;
-  removeCharacter: (character: Character) => void;
-  place: Place;
-}) {
+function removeCharacter(place: Place, character: Character) {
+  store.setCharacterDeletion(true, place, character);
+}
+
+function CharactersGrid({ rootRegion }: { rootRegion: Region | Place }) {
   const classes = useStyles();
+
+  function renderRegion(region: Region): ReactNode[] {
+    return Array.from(region.children).map((region) =>
+      region instanceof Place ? renderPlace(region) : renderRegion(region)
+    );
+  }
+
+  function renderPlace(place: Place) {
+    return Array.from(place.characters).map((character, index) => (
+      <CharacterCard
+        key={index}
+        character={character}
+        remove={() => removeCharacter(place, character)}
+        onDragStart={(event) => onDragStart(event, character, place)}
+      />
+    ));
+  }
 
   return (
     <>
       <div className={classes.gridList}>
-        {Array.from(characters).map((character, index) => (
-          <CharacterCard
-            key={index}
-            character={character}
-            remove={() => removeCharacter(character)}
-            onDragStart={(event) => onDragStart(event, character, place)}
-          />
-        ))}
+        {rootRegion instanceof Region
+          ? renderRegion(rootRegion)
+          : renderPlace(rootRegion)}
       </div>
       <CharacterEditDialog />
     </>
