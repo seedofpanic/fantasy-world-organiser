@@ -7,7 +7,7 @@
   "description": "World organiser for DMs",
   "dependencies": {},
   "scripts": {
-    "react": "react-scripts start",
+    "react": "cross-env \"BROWSER=none\" react-scripts start",
     "start": "cross-env IS_DEBUG=true electron-forge start",
     "build": "cross-env \"PUBLIC_URL=.\" react-scripts build",
     "test": "react-scripts test",

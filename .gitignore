@@ -25,5 +25,5 @@ yarn-error.log*
 
 .idea
 *.fws
-yarn.lock
+package.json.lock
 /app.config
