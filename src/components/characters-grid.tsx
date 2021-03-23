@@ -36,7 +36,7 @@ function onDragStart(
 }
 
 function removeCharacter(place: Place, character: Character) {
-  store.setCharacterDeletion(true, place, character);
+  store.characterDeletion.setCharacterDeletion(true, place, character);
 }
 
 function CharactersGrid({ rootRegion }: { rootRegion: Region | Place }) {

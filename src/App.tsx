@@ -2,13 +2,14 @@ import React from "react";
 import "./App.css";
 import { makeStyles } from "@material-ui/core/styles";
 import RegionsList from "./components/regions-list";
-import { saveCurrentProject, store } from "./store/store";
+import { store } from "./store/store";
 import { observer } from "mobx-react-lite";
 import RegionInfo from "./components/region-info";
 import { Region } from "./store/region";
 import { Place } from "./store/place";
 import PlaceInfo from "./components/place-info";
 import DeleteConfirmationDialog from "./components/delete-confirmation-dialog";
+import { saveCurrentProject } from "./store/save-load";
 
 const useStyles = makeStyles({
   app: {
@@ -37,13 +38,13 @@ const useStyles = makeStyles({
 function handleClose(result: boolean) {
   if (result) {
     saveCurrentProject(() => {
-      store.setAppQuite(false, true);
+      store.appQuite.setAppQuite(false, true);
     });
 
     return;
   }
 
-  store.setAppQuite(false, true);
+  store.appQuite.setAppQuite(false, true);
 }
 
 function App() {

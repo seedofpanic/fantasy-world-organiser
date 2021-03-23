@@ -79,10 +79,10 @@ function RegionsList() {
 
 function handleClose(result: boolean) {
   if (result) {
-    store.commitRegionDeletion();
+    store.regionDeletion.commitRegionDeletion();
   }
 
-  store.setRegionDeletion(false);
+  store.regionDeletion.setRegionDeletion(false);
 }
 
 export default observer(RegionsList);

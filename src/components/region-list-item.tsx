@@ -8,12 +8,9 @@ import { useSpring, animated } from "react-spring/web.cjs";
 import Collapse from "@material-ui/core/Collapse";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { store } from "../store/store";
-import makeStyles from "@material-ui/core/styles/makeStyles"; // web.cjs is required for IE 11 support
-import IconButton from "@material-ui/core/IconButton";
-import { Add, Close } from "@material-ui/icons";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Place } from "../store/place";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
+import { LabelComponent } from "./region-list-item-label";
 
 function TransitionComponent(props: TransitionProps) {
   const style = useSpring({
@@ -30,138 +27,6 @@ function TransitionComponent(props: TransitionProps) {
     </animated.div>
   );
 }
-
-const useLabelStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    box: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
-      padding: "10px 0",
-    },
-    name: {
-      flex: "1 1 auto",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-    actions: {
-      position: "relative",
-      display: "flex",
-      flex: "0 0 auto",
-      flexDirection: "row",
-      marginLeft: 20,
-    },
-    speedDial: {
-      right: "100%",
-      top: -16,
-      position: "absolute",
-    },
-    action: {
-      backgroundColor: "red",
-      color: "white",
-    },
-  })
-);
-
-const speedDialStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      width: 20,
-      height: 20,
-      minHeight: 20,
-      marginTop: 5,
-      alignItems: "flex-start",
-    },
-  })
-);
-
-const LabelComponent = observer(
-  ({
-    region,
-    label,
-    remove,
-  }: {
-    region: Region | Place;
-    label: string;
-    remove: () => void;
-  }) => {
-    const classes = useLabelStyles();
-    const speedDialClasses = speedDialStyles();
-    const [open, setOpen] = React.useState(false);
-
-    const handleClose = () => {
-      setOpen(false);
-    };
-
-    const handleOpen = () => {
-      setOpen(true);
-    };
-
-    const actions = [
-      {
-        icon: <div>R</div>,
-        name: "Add Region",
-        onClick: () => {
-          if (region instanceof Region) {
-            region.createNewSubRegion();
-          }
-          handleClose();
-        },
-      },
-      {
-        icon: <div>P</div>,
-        name: "Add Place",
-        onClick: () => {
-          if (region instanceof Region) {
-            region.createNewPlace();
-          }
-          handleClose();
-        },
-      },
-    ];
-
-    return (
-      <div
-        className={classes.box}
-        onDrop={(event) => onDrop(event, region)}
-        onDragOver={(e) => allowDrop(e, region)}
-        onDragLeave={onDragLeave}
-      >
-        <div className={classes.name}>{label}</div>
-        <div className={classes.actions}>
-          {region instanceof Region ? (
-            <SpeedDial
-              ariaLabel="SpeedDial example"
-              className={classes.speedDial}
-              classes={speedDialClasses}
-              icon={<Add fontSize="small" />}
-              onClose={handleClose}
-              onOpen={handleOpen}
-              open={open}
-              direction="left"
-            >
-              {actions.map((action) => (
-                <SpeedDialAction
-                  className={classes.action}
-                  key={action.name}
-                  icon={action.icon}
-                  tooltipTitle={action.name}
-                  onClick={action.onClick}
-                />
-              ))}
-            </SpeedDial>
-          ) : (
-            ""
-          )}
-          <IconButton size="small" onClick={remove}>
-            <Close />
-          </IconButton>
-        </div>
-      </div>
-    );
-  }
-);
 
 const StyledTreeItem = withStyles((theme: Theme) =>
   createStyles({
@@ -192,29 +57,8 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function allowDrop(ev: DragEvent, region: Region | Place) {
-  if (region instanceof Place) {
-    store.characterMovement.setToPlace(region);
-  }
-  ev.preventDefault();
-}
-
-function onDragLeave() {
-  store.characterMovement.setToPlace(undefined);
-}
-
-function onDrop(ev: DragEvent, region: Region | Place) {
-  if (region instanceof Place && store.characterMovement.draggedCharacter) {
-    store.characterMovement.fromPlace?.removeCharacter(
-      store.characterMovement.draggedCharacter
-    );
-    region.addCharacter(store.characterMovement.draggedCharacter);
-    onDragLeave();
-  }
-}
-
 function remove(regionFrom: Region, region: Region | Place) {
-  store.setRegionDeletion(true, regionFrom, region);
+  store.regionDeletion.setRegionDeletion(true, regionFrom, region);
 }
 
 const RegionListItem = observer(

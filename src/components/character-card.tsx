@@ -55,7 +55,7 @@ const handleClickOpen = (
   event: React.MouseEvent<HTMLDivElement>,
   character: Character
 ) => {
-  store.setCharacterEditOpen(true, character);
+  store.characterEdit.setCharacterEditOpen(true, character);
 };
 
 const ClassRaceLabel = observer(({ character }: { character: Character }) => {

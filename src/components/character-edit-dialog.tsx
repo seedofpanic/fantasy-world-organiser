@@ -15,15 +15,15 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const handleChange = (value: string | null, field: keyof Character) => {
   console.log(value);
-  store.updateCharacterEditForm(field, value);
+  store.characterEdit.updateCharacterEditForm(field, value);
 };
 
 const handleClose = () => {
-  store.setCharacterEditOpen(false);
+  store.characterEdit.setCharacterEditOpen(false);
 };
 
 const handleSave = () => {
-  store.updateCharacterFromForm();
+  store.characterEdit.updateCharacterFromForm();
   handleClose();
 };
 

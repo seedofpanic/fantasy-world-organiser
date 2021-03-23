@@ -45,10 +45,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function handleClose(result: boolean) {
   if (result) {
-    store.commitCharacterDeletion();
+    store.characterDeletion.commitCharacterDeletion();
   }
 
-  store.setCharacterDeletion(false);
+  store.characterDeletion.setCharacterDeletion(false);
 }
 
 function PlaceInfo({ place }: { place: Place }) {
