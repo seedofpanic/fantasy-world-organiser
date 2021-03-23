@@ -3,7 +3,7 @@ import { Region } from "./region";
 import { Place } from "./place";
 import { CharacterMovement } from "./character-movement";
 import { CharacterDeletion } from "./character-deletion";
-import { AppQuite } from "./app-quite";
+import { AppQuit } from "./app-quit";
 import { RegionDeletion } from "./region-deletion";
 import { CharacterEdit } from "./character-edit";
 
@@ -14,7 +14,7 @@ class Store {
   characterEdit = new CharacterEdit();
   regionDeletion = new RegionDeletion();
   characterDeletion = new CharacterDeletion();
-  appQuite = new AppQuite();
+  appQuit = new AppQuit();
   characterMovement = new CharacterMovement();
 
   constructor() {
@@ -47,13 +47,13 @@ class Store {
 export const store = new Store();
 
 window.onbeforeunload = (e: BeforeUnloadEvent) => {
-  if (!store.appQuite.canQuite) {
-    store.appQuite.setAppQuite(true);
+  if (!store.appQuit.canQuit) {
+    store.appQuit.setAppQuit(true);
   }
 
-  if (store.appQuite.canQuite) {
+  if (store.appQuit.canQuit) {
     return;
   } else {
-    return store.appQuite.canQuite;
+    return store.appQuit.canQuit;
   }
 };

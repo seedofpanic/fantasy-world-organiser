@@ -38,13 +38,13 @@ const useStyles = makeStyles({
 function handleClose(result: boolean) {
   if (result) {
     saveCurrentProject(() => {
-      store.appQuite.setAppQuite(false, true);
+      store.appQuit.setAppQuit(false, true);
     });
 
     return;
   }
 
-  store.appQuite.setAppQuite(false, true);
+  store.appQuit.setAppQuit(false, true);
 }
 function handleCloseCharacterDelete(result: boolean) {
   if (result) {
@@ -85,7 +85,7 @@ function App() {
         id="ringtone-menu"
         keepMounted
         onClose={handleClose}
-        open={store.appQuite.isOpen}
+        open={store.appQuit.isOpen}
         title="Do you want to save changes before exit?"
       />
       <DeleteConfirmationDialog

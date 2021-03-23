@@ -1,16 +1,16 @@
 import { makeAutoObservable } from "mobx";
 
-export class AppQuite {
-  canQuite = false;
+export class AppQuit {
+  canQuit = false;
   isOpen = false;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  setAppQuite(isOpen: boolean, canQuite = false) {
+  setAppQuit(isOpen: boolean, canQuit = false) {
     this.isOpen = isOpen;
-    this.canQuite = canQuite;
+    this.canQuit = canQuit;
     window.close();
   }
 }

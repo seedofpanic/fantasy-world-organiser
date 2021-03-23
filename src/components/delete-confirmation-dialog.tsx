@@ -65,7 +65,7 @@ function DeleteConfirmationDialog(props: ConfirmationDialogRawProps) {
       </DialogTitle>
       <DialogActions>
         <Button autoFocus onClick={handleCancel} color="primary">
-          Cancel
+          No
         </Button>
         <Button onClick={handleOk} color="primary">
           Ok
