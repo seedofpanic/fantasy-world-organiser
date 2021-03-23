@@ -3,9 +3,6 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-// const { ipcRenderer } = require('electron');
-
-// console.log(ipcRenderer);
 
 ReactDOM.render(<App />, document.getElementById("root"));
 

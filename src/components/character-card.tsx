@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: "hidden",
       height: "100%",
       position: "relative",
+      fontStyle: "italic",
       "&::after": {
         content: '""',
         textAlign: "right",

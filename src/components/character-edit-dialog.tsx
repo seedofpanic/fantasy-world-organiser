@@ -14,7 +14,6 @@ import { races } from "../store/races";
 import { makeStyles } from "@material-ui/core/styles";
 
 const handleChange = (value: string | null, field: keyof Character) => {
-  console.log(value);
   store.characterEdit.updateCharacterEditForm(field, value);
 };
 

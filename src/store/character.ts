@@ -29,4 +29,8 @@ export class Character {
   setProfession(profession: string) {
     this.profession = profession;
   }
+
+  setId(id: string) {
+    this.id = id;
+  }
 }

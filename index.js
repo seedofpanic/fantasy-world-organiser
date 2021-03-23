@@ -141,7 +141,7 @@ function requestSaveAs(win, clear) {
     updateConfig("savingPath", path);
 
     if (clear) {
-      win.webContents.send("loaded", { fileName: path });
+      win.webContents.send("loaded", { fileName: path, data: loadExample() });
     }
 
     win.webContents.sendInputEvent(saveEvent);
@@ -187,7 +187,21 @@ function load(win) {
     return;
   }
 
-  const data = fs.readFileSync(fileName, { encoding: "utf8" });
+  const data = loadFromFile(fileName);
 
   win.webContents.send("loaded", { data, fileName });
+}
+
+function loadExample() {
+  const exampleFileName = "world.example";
+
+  if (!fs.existsSync(exampleFileName)) {
+    return "";
+  }
+
+  return loadFromFile(exampleFileName);
+}
+
+function loadFromFile(fileName) {
+  return fs.readFileSync(fileName, { encoding: "utf8" });
 }

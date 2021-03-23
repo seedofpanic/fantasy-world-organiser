@@ -25,15 +25,17 @@ reaction(
 );
 
 window.loadData((data) => {
+  if (savingTimer) {
+    clearTimeout(savingTimer);
+    savingTimer = null;
+  }
+
   try {
     loadData(data);
   } catch (e) {
     console.log("failed to load file " + data.fileName);
-  }
 
-  if (savingTimer) {
-    clearTimeout(savingTimer);
-    savingTimer = null;
+    return;
   }
 
   if (data.fileName) {
@@ -61,7 +63,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 export const saveCurrentProject = (cb?: () => void) => {
-  const data = JSON.stringify(store, (key, value) => {
+  const dataToSave = { rootRegion: store.rootRegion };
+  const data = JSON.stringify(dataToSave, (key, value) => {
     if (
       value &&
       typeof value === "object" &&
