@@ -14,8 +14,7 @@
     "eject": "react-scripts eject",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "pretty-quick": "pretty-quick",
-    "postinstall": "husky install"
+    "pretty-quick": "pretty-quick"
   },
   "eslintConfig": {
     "extends": [

@@ -125,10 +125,15 @@ class Store {
 
   updateCharacterFromForm() {
     Object.keys(this.characterEdit.formData).forEach((key) => {
-      // @ts-ignore
-      this.characterEdit.character[
-        `set${key[0].toUpperCase()}${key.substr(1)}`
-      ](this.characterEdit.formData[key] || "");
+      if (!this.characterEdit.character) {
+        return;
+      }
+
+      (this.characterEdit.character[
+        `set${key[0].toUpperCase()}${key.substr(1)}` as keyof Character
+      ] as (value: string) => void)(
+        (this.characterEdit.formData[key as keyof Character] as string) || ""
+      );
     });
   }
 
@@ -212,19 +217,20 @@ function loadData({ data, fileName }: { data: string; fileName: string }) {
   store.restore(restored);
 }
 
-function restore<T>(obj: T, data: Partial<T>) {
+function restore<T>(
+  obj: T & { constructor: { type: string } },
+  data: Partial<T>
+) {
   Object.keys(obj).forEach((key) => {
     if (data[key as keyof T]) {
+      const setMethodKey = `set${key[0].toUpperCase()}${key.substr(
+        1
+      )}` as keyof T;
+
       try {
-        // @ts-ignore
-        obj[`set${key[0].toUpperCase()}${key.substr(1)}`](data[key]);
+        (obj[setMethodKey] as any)(data[setMethodKey as keyof T] as any);
       } catch (e) {
-        // @ts-ignore
-        throw new Error(
-          `No set${key[0].toUpperCase()}${key.substr(1)} in ${
-            obj.constructor.type
-          }`
-        );
+        throw new Error(`No ${setMethodKey} in ${obj.constructor.type}`);
       }
     }
   });
