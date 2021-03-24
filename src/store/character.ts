@@ -1,10 +1,12 @@
 import { makeAutoObservable } from "mobx";
 
+let id = 0;
+
 export class Character {
   static isSerializable = true;
   static type = "Character";
 
-  id: string = "";
+  id = id++;
   name: string = "";
   description: string = "";
   race: string = "";
@@ -30,7 +32,5 @@ export class Character {
     this.profession = profession;
   }
 
-  setId(id: string) {
-    this.id = id;
-  }
+  setId(id: number) {}
 }

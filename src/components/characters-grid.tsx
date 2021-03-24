@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { DragEvent, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 import { createStyles, Theme } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -23,20 +23,73 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexWrap: "wrap",
     },
+    characterBox: {
+      flex: "0 1 33%",
+      boxSizing: "border-box",
+      height: 177,
+      padding: 10,
+    },
   })
 );
+
+let draggedRef: React.RefObject<HTMLDivElement>;
 
 function onDragStart(
   event: React.DragEvent,
   character: Character,
-  place: Place
+  place: Place,
+  characterBoxRef: React.RefObject<HTMLDivElement>
 ) {
   store.characterMovement.startDragging(character, place);
-  // (event.target as HTMLDivElement).style.pointerEvents = 'none';
+  draggedRef = characterBoxRef;
 }
 
 function removeCharacter(place: Place, character: Character) {
   store.characterDeletion.setCharacterDeletion(true, place, character);
+}
+
+function onDrop() {
+  if (
+    draggedRef.current &&
+    store.characterMovement.fromPlace &&
+    store.characterMovement.draggedCharacter
+  ) {
+    store.characterMovement.fromPlace.reorderCharacter(
+      store.characterMovement.draggedCharacter,
+      store.characterMovement.order
+    );
+  }
+}
+
+function allowDrop(
+  ev: React.DragEvent,
+  characterBoxRef: React.RefObject<HTMLDivElement>
+) {
+  ev.preventDefault();
+
+  if (characterBoxRef.current && draggedRef.current) {
+    // Ignore dragging on it self
+    if (+characterBoxRef.current.style.order % 2) {
+      return;
+    }
+
+    if (characterBoxRef !== draggedRef) {
+      // If the card was dragged from right than we need to place it to the left of a target and vice versa
+      const correction =
+        +draggedRef.current.style.order > +characterBoxRef.current.style.order
+          ? -1
+          : 1;
+      // Calculating array insert index
+      const order =
+        +characterBoxRef.current.style.order / 2 + (correction === 1 ? 1 : 0);
+
+      draggedRef.current.style.order = (
+        +characterBoxRef.current.style.order + correction
+      ).toString();
+
+      store.characterMovement.setOrder(order);
+    }
+  }
 }
 
 function CharactersGrid({ rootRegion }: { rootRegion: Region | Place }) {
@@ -49,23 +102,43 @@ function CharactersGrid({ rootRegion }: { rootRegion: Region | Place }) {
   }
 
   function renderPlace(place: Place) {
-    return Array.from(place.characters).map((character, index) => (
-      <CharacterCard
-        key={index}
-        character={character}
-        remove={() => removeCharacter(place, character)}
-        onDragStart={(event) => onDragStart(event, character, place)}
-      />
-    ));
+    return (
+      <div key={place.id}>
+        <h3>{place.name}</h3>
+        <div className={classes.gridList}>
+          {Array.from(place.characters).map((character, index) => {
+            const characterBoxRef = React.createRef<HTMLDivElement>();
+
+            return (
+              <div
+                key={character.id}
+                ref={characterBoxRef}
+                className={classes.characterBox}
+                style={{ order: index * 2 }}
+                onDrop={onDrop}
+                onDragOver={(e) => allowDrop(e, characterBoxRef)}
+              >
+                <CharacterCard
+                  key={index}
+                  character={character}
+                  remove={() => removeCharacter(place, character)}
+                  onDragStart={(event) =>
+                    onDragStart(event, character, place, characterBoxRef)
+                  }
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
   }
 
   return (
     <>
-      <div className={classes.gridList}>
-        {rootRegion instanceof Region
-          ? renderRegion(rootRegion)
-          : renderPlace(rootRegion)}
-      </div>
+      {rootRegion instanceof Region
+        ? renderRegion(rootRegion)
+        : renderPlace(rootRegion)}
       <CharacterEditDialog />
     </>
   );

@@ -32,7 +32,7 @@ function RegionInfo({ region }: { region: Region }) {
   const classes = useStyles();
 
   return (
-    <div>
+    <div className={classes.box}>
       <div className={classes.name}>
         <NameEdit
           name={region.name}

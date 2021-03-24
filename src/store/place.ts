@@ -9,26 +9,24 @@ export class Place {
 
   id = newId++;
   name = `Place ${this.id}`;
-  characters: Set<Character> = new Set<Character>();
+  characters: Character[] = [];
 
   constructor() {
     makeAutoObservable(this);
   }
 
   addCharacter(character: Character) {
-    this.characters.add(character);
+    this.characters.push(character);
   }
 
-  setId(id: number) {
-    this.id = id;
-  }
+  setId(id: number) {}
 
   setName(name: string) {
     this.name = name;
   }
 
-  setCharacters(characters: Set<Character>) {
-    this.characters = new Set(characters);
+  setCharacters(characters: Character[]) {
+    this.characters = characters;
   }
 
   createNewCharacter() {
@@ -36,6 +34,11 @@ export class Place {
   }
 
   removeCharacter(character: Character) {
-    this.characters.delete(character);
+    this.characters.splice(this.characters.indexOf(character), 1);
+  }
+
+  reorderCharacter(draggedCharacter: Character, order: number) {
+    this.removeCharacter(draggedCharacter);
+    this.characters.splice(order, 0, draggedCharacter);
   }
 }

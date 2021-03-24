@@ -90,11 +90,15 @@ export const LabelComponent = observer(
     const speedDialClasses = speedDialStyles();
     const [open, setOpen] = React.useState(false);
 
-    const handleClose = () => {
-      setOpen(false);
+    const handleClose = (e: React.SyntheticEvent<{}>, type: string) => {
+      if (type !== "toggle") {
+        setOpen(false);
+      } else {
+        e.stopPropagation();
+      }
     };
 
-    const handleOpen = () => {
+    const handleOpen = (e: React.SyntheticEvent<{}>, type: string) => {
       setOpen(true);
     };
 

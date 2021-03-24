@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme: Theme) =>
       "box-sizing": "border-box",
       display: "flex",
       flexDirection: "column",
-      flex: "0 1 33%",
     },
     title: {
       flex: "0 0 auto",
@@ -44,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     still: {
-      height: 177,
+      height: "100%",
     },
     isDragging: {
       height: "72px !important",
@@ -94,7 +93,7 @@ const CharacterCard = observer(
       <Card
         draggable="true"
         onDragStart={onDragStart}
-        className={`${classes.character}`}
+        className={`${classes.character} ${classes.still}`}
         variant="outlined"
         onClick={(e) => handleClickOpen(e, character)}
       >

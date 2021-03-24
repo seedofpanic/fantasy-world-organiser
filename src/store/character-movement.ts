@@ -6,6 +6,7 @@ export class CharacterMovement {
   draggedCharacter?: Character;
   fromPlace?: Place;
   toPlace?: Place;
+  order = 0;
 
   constructor() {
     makeAutoObservable(this);
@@ -18,5 +19,9 @@ export class CharacterMovement {
 
   setToPlace(place: Place | undefined) {
     this.toPlace = place;
+  }
+
+  setOrder(number: number) {
+    this.order = number;
   }
 }
