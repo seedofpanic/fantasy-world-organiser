@@ -73,8 +73,6 @@ const saveEvent = {
 };
 
 function constructMenus(win) {
-  // const menu = Menu.getApplicationMenu();
-
   const template = [
     {
       label: "Electron",
@@ -215,9 +213,11 @@ function load(win) {
 }
 
 function loadExample() {
-  const exampleFileName = __dirname + "world.example";
+  const exampleFileName = path.join(__dirname, "world.example");
 
+  console.log(exampleFileName);
   if (!fs.existsSync(exampleFileName)) {
+    console.log("oops");
     return "";
   }
 
