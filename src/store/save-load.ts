@@ -20,7 +20,7 @@ declare var window: Window &
 reaction(
   () => store.fileName,
   (fileName) => {
-    document.title = `Fantasy World Organizer (${fileName})`;
+    document.title = `Fantasy World Organiser (${fileName})`;
   }
 );
 

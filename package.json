@@ -1,5 +1,5 @@
 {
-  "name": "fantasy-world-organizer",
+  "name": "fantasy-world-organiser",
   "version": "0.1.2",
   "private": true,
   "main": "index.js",
@@ -83,7 +83,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "fantasy_world_organizer",
+            "name": "fantasy_world_organiser",
             "setupIcon": "public/3d-sites-icon.ico"
           }
         },

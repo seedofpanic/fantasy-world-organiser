@@ -49,7 +49,7 @@ loadConfig();
 
 function createWindow() {
   const win = new BrowserWindow({
-    title: "Fantasy World Organizer",
+    title: "Fantasy World Organiser",
     width: 2000,
     height: 1200,
     webPreferences: {
