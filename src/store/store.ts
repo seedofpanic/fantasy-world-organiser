@@ -47,7 +47,7 @@ class Store {
 export const store = new Store();
 
 window.onbeforeunload = (e: BeforeUnloadEvent) => {
-  if (!store.appQuit.canQuit) {
+  if (!store.appQuit.canQuit || !store.fileName) {
     store.appQuit.setAppQuit(true);
   }
 

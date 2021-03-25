@@ -16,7 +16,7 @@ const {
 const path = require("path");
 const fs = require("fs");
 
-const configPath = "app.config";
+const configPath = __dirname + "app.config";
 let config;
 
 function updateConfig(key, value) {
@@ -73,57 +73,81 @@ const saveEvent = {
 };
 
 function constructMenus(win) {
-  const menu = Menu.getApplicationMenu();
+  // const menu = Menu.getApplicationMenu();
 
-  menu.items[0].submenu.insert(
-    0,
-    new MenuItem({
-      label: "New",
-      click: () => {
-        requestSaveAs(win, true);
-      },
-    })
-  );
-  menu.items[0].submenu.insert(
-    1,
-    new MenuItem({
-      label: "Open",
-      click: () => {
-        const path = dialog.showOpenDialogSync({
-          filters: [
-            {
-              name: "fws",
-              extensions: ["fws"],
-            },
-          ],
-          defaultPath: __dirname,
-        });
+  const template = [
+    {
+      label: "Electron",
+      submenu: [{ role: "quit" }],
+    },
+    {
+      label: "File",
+      submenu: [
+        {
+          label: "New",
+          click: () => {
+            requestSaveAs(win, true);
+          },
+        },
+        {
+          label: "Open",
+          click: () => {
+            const path = dialog.showOpenDialogSync({
+              filters: [
+                {
+                  name: "fws",
+                  extensions: ["fws"],
+                },
+              ],
+              defaultPath: __dirname,
+            });
 
-        if (path && path[0]) {
-          updateConfig("savingPath", path[0]);
-          load(win);
-        }
-      },
-    })
-  );
-  menu.items[0].submenu.insert(
-    2,
-    new MenuItem({
-      label: "Save",
-      click: () => {
-        win.webContents.sendInputEvent(saveEvent);
-      },
-    })
-  );
-  menu.items[0].submenu.insert(
-    3,
-    new MenuItem({
-      label: "Save As",
-      click: () => {
-        requestSaveAs(win, false);
-      },
-    })
-  );
+            if (path && path[0]) {
+              updateConfig("savingPath", path[0]);
+              load(win);
+            }
+          },
+        },
+        {
+          label: "Save",
+          click: () => {
+            win.webContents.sendInputEvent(saveEvent);
+          },
+        },
+        {
+          label: "Save As",
+          click: () => {
+            requestSaveAs(win, false);
+          },
+        },
+      ],
+    },
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { role: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        { role: "pasteandmatchstyle" },
+        { role: "delete" },
+        { role: "selectall" },
+      ],
+    },
+    {
+      label: "Help",
+      submenu: [
+        { role: "reload" },
+        { role: "toggleFullScreen" },
+        { role: "toggleDevTools" },
+      ],
+    },
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
+  // const fileMenu = menu.items.find(menu => menu.role === 'filemenu');
 }
 
 function requestSaveAs(win, clear) {
@@ -169,9 +193,7 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  app.quit();
 });
 
 ipcMain.on("save", (e, data) => {
@@ -193,7 +215,7 @@ function load(win) {
 }
 
 function loadExample() {
-  const exampleFileName = "world.example";
+  const exampleFileName = __dirname + "world.example";
 
   if (!fs.existsSync(exampleFileName)) {
     return "";
